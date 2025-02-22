@@ -1,0 +1,32 @@
+{
+  "1": {
+    "id": 1,
+    "name": "Beatles",
+    "coordinates": {
+      "x": 2,
+      "y": 3.0
+    },
+    "creationDate": "Feb 23, 2025, 1:07:37 AM",
+    "numberOfParticipants": 4,
+    "genre": "JAZZ",
+    "studio": {
+      "studioName": "Shizo",
+      "address": "New-York"
+    }
+  },
+  "2": {
+    "id": 2,
+    "name": "MetlJack",
+    "coordinates": {
+      "x": 4,
+      "y": 5.0
+    },
+    "creationDate": "Feb 23, 2025, 1:08:38 AM",
+    "numberOfParticipants": 6,
+    "genre": "ROCK",
+    "studio": {
+      "studioName": "Saint",
+      "address": "London"
+    }
+  }
+}
