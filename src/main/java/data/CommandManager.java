@@ -9,10 +9,11 @@ import java.util.TreeMap;
 /**
  * Отвечает за управление командами, их регистрацию и выполнение.
  */
-
-
 public class CommandManager implements CommandRegistry {
     private final Map<String, CommandUseable> commands = new TreeMap<>();
+    private static final String space = "\\s+";
+    private static final int element = 0;
+    private static final int splitLimit = 2;
 
     public CommandManager(String fileName, CollectionManager collectionManager) {
         initializeCommands(fileName, collectionManager);
@@ -65,13 +66,14 @@ public class CommandManager implements CommandRegistry {
             System.out.println("Ошибка: Пустая команда не может быть выполнена.");
             return;
         }
+
         // Проверяем, ввёл ли пользователь число (номер команды)
         try {
             int commandNumber = Integer.parseInt(input.trim());
             String commandName = getCommandByNumber(commandNumber);
 
             if (commandName != null) {
-                commands.get(commandName).execute();
+                commands.get(commandName).execute();  // Просто вызываем execute без параметров
             } else {
                 System.out.println("Ошибка: Команда с номером " + commandNumber + " не найдена.");
             }
@@ -79,17 +81,34 @@ public class CommandManager implements CommandRegistry {
         } catch (NumberFormatException ignored) {
         }
 
-        String commandName = parseCommand(input);
+        String commandName = parseCommand(input);  // Извлекаем команду
         CommandUseable commandUseable = commands.get(commandName);
 
         if (commandUseable == null) {
             System.out.println("Ошибка: Команда '" + commandName + "' не найдена.");
             return;
         }
-        try {
-            commandUseable.execute();
-        } catch (Exception e) {
-            System.err.println("Ошибка при выполнении команды '" + commandName + "': " + e.getMessage());
+        // Извлекаем параметры (оставшуюся часть после команды)
+        String parameters = input.substring(commandName.length()).trim();
+
+        // Прямой вызов соответствующего метода для обработки параметров
+        switch (commandUseable) {
+            case ExecuteScript executeScript ->
+                // В случае с ExecuteScript параметры будут переданы в executeScriptWithParameters
+                    executeScript.executeScriptWithParameters(parameters);
+            case Insert insert -> {
+                // Прямой вызов executeInsertWithParameters только при передаче параметров через ExecuteScript
+                if (!parameters.isEmpty()) {
+                    ((Insert) commandUseable).executeInsertWithParameters(parameters);
+                } else {
+                    // Для ручного ввода вызываем обычный execute() метод
+                    commandUseable.execute();
+                }
+            }
+            case Update update -> update.executeUpdateWithParameters(parameters);
+            default ->
+                // Для всех остальных команд без параметров
+                    commandUseable.execute();
         }
     }
 
@@ -97,7 +116,7 @@ public class CommandManager implements CommandRegistry {
      * Извлекает название команды из введенного пользователем текста.
      */
     private String parseCommand(String input) {
-        return input.trim().split("\\s+", 2)[0];
+        return input.trim().split(space, splitLimit)[element];
     }
 
     /**
@@ -112,5 +131,4 @@ public class CommandManager implements CommandRegistry {
             index++;
         }
     }
-
 }
