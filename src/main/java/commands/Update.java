@@ -1,6 +1,7 @@
 package commands;
 
 import commands.interfaces.CommandUseable;
+import data.InsertData;
 import data.*;
 import models.*;
 
@@ -41,81 +42,17 @@ public class Update extends BaseCommand implements CommandUseable {
             System.out.print("Введите название группы: ");
             String name = scanner.nextLine().trim();
 
-            // Ввод координаты X с проверкой на корректность
-            long x = 0;
-            boolean xCoordinte = false;
-            while (!xCoordinte) {
-                System.out.print("Введите координату X: ");
-                try {
-                    x = scanner.nextLong();
-                    if (x > 783) {
-                        System.out.println("Ошибка: Координата X не может быть больше 783. Попробуйте снова.");
-                    } else {
-                        xCoordinte = true;
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.println("Ошибка: Введено некорректное значение координаты X. Попробуйте снова.");
-                    scanner.nextLine();
-                }
-            }
-            // Ввод координаты Y с проверкой на корректность
-            long y = 0;
-            boolean yCoordinte = false;
-            while (!yCoordinte) {
-                System.out.print("Введите координату Y: ");
-                try {
-                    y = scanner.nextLong();
-                    yCoordinte = true;
-                } catch (InputMismatchException e) {
-                    System.out.println("Ошибка: Введено некорректное значение координаты Y. Попробуйте снова.");
-                    scanner.nextLine();
-                }
-            }
-            scanner.nextLine();
-            Coordinates coordinates = new Coordinates(x, y);
+            // Ввод координат X и Y
+            Coordinates coordinates = InsertData.getCoorinates(scanner);
 
             // Ввод количества участников (больше 0)
-            Integer numberOfParticipants = null;
-            boolean participantsValid = false;
-            while (!participantsValid) {
-                System.out.print("Введите количество участников (больше 0): ");
-                String participantsInput = scanner.nextLine().trim();
-                if (participantsInput.isEmpty()) {
-                    System.out.println("Ошибка: Количество участников не может быть пустым.");
-                } else {
-                    try {
-                        numberOfParticipants = Integer.parseInt(participantsInput);
-                        if (numberOfParticipants > 0) {
-                            participantsValid = true;
-                        } else {
-                            System.out.println("Ошибка: Количество участников должно быть больше 0. Попробуйте снова.");
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Ошибка: Введено некорректное значение (строка). Попробуйте снова.");
-                    }
-                }
-            }
+            Integer numberOfParticipants = InsertData.getNumberOfParticipants(scanner);
 
             // Ввод жанра с проверкой
-            MusicGenre genre = null;
-            while (genre == null) {
-                System.out.print("Введите жанр (ROCK, PSYCHEDELIC_ROCK, PSYCHEDELIC_CLOUD_RAP, JAZZ): ");
-                if (!scanner.hasNextLine()) {
-                    System.out.println("Ошибка: Ожидался ввод жанра.");
-                    return;
-                }
-                try {
-                    genre = MusicGenre.valueOf(scanner.nextLine().trim().toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Ошибка: Неверный жанр. Попробуйте снова.");
-                }
-            }
+            MusicGenre genre = InsertData.getGenre(scanner);
 
-            System.out.print("Введите название студии: ");
-            String studioName = scanner.nextLine().trim();
-            System.out.print("Введите адрес студии: ");
-            String address = scanner.nextLine().trim();
-            Studio studio = new Studio(studioName, address);
+            // Ввод названия и адреса студии
+            Studio studio = InsertData.getStudio(scanner);
 
             // Получаем старый объект
             MusicBand oldBand = collectionManager.getByKey(id);
@@ -156,7 +93,13 @@ public class Update extends BaseCommand implements CommandUseable {
             String name = params[1].trim();
             long x = Long.parseLong(params[2].trim());
             long y = Long.parseLong(params[3].trim());
-            int numberOfParticipants = Integer.parseInt(params[4].trim());
+
+            // Обработка пустого значения для количества участников
+            Integer numberOfParticipants = null;
+            if (!params[4].trim().isEmpty()) {
+                numberOfParticipants = Integer.parseInt(params[4].trim());
+            }
+
             MusicGenre genre = MusicGenre.valueOf(params[5].trim().toUpperCase());
             String studioName = params[6].trim();
             String studioAddress = params[7].trim();
@@ -174,7 +117,6 @@ public class Update extends BaseCommand implements CommandUseable {
             System.out.println("Ошибка при обработке параметров: " + e.getMessage());
         }
     }
-
 
     @Override
     public String getDescription() {

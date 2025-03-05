@@ -10,6 +10,9 @@ public class Coordinates {
     private final double y;
 
     public Coordinates(Long x, double y) {
+        if (x > 783) {
+            throw new IllegalArgumentException("Ошибка: Координата X не может быть больше 783.");
+        }
         this.x = x;
         this.y = y;
     }
