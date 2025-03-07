@@ -1,7 +1,6 @@
 package commands;
 
 import commands.interfaces.CommandUseable;
-import data.InsertData;
 import data.*;
 import models.*;
 
@@ -78,21 +77,31 @@ public class Insert extends BaseCommand implements CommandUseable {
                 System.out.println("Ошибка: Недостаточно параметров для вставки. Требуется 7 параметров.");
                 return;
             }
-
-            // Извлечение значений из массива параметров
-            String name = params[0].trim();
-            long x = Long.parseLong(params[1].trim());  // Координата X
-            long y = Long.parseLong(params[2].trim());  // Координата Y
-
-            // Обработка пустого значения для количества участников
-            Integer numberOfParticipants = null;
-            if (!params[3].trim().isEmpty()) {
-                numberOfParticipants = Integer.parseInt(params[3].trim());
+            // Удаляем внешние кавычки из каждого параметра
+            for (int i = 0; i < params.length; i++) {
+                // Убираем кавычки
+                params[i] = params[i].trim().replaceAll("^\"|\"$", "");
             }
 
-            MusicGenre genre = MusicGenre.valueOf(params[4].trim().toUpperCase());  // Жанр
-            String studioName = params[5].trim();  // Название студии
-            String address = params[6].trim();  // Адрес студии
+            // Извлечение значений из массива параметров
+            String name = params[0];
+            long x = Long.parseLong(params[1]);  // Координата X
+            long y = Long.parseLong(params[2]);  // Координата Y
+
+            // Обработка пустого значения для количества участников
+            int numberOfParticipants = 0;  // Значение по умолчанию
+            if (!params[3].isEmpty()) {
+                try {
+                    numberOfParticipants = Integer.parseInt(params[3]);
+                } catch (NumberFormatException e) {
+                    System.out.println("Ошибка: Некорректный формат количества участников. Используйте целое число.");
+                    return;
+                }
+            }
+
+            MusicGenre genre = MusicGenre.valueOf(params[4].trim().toUpperCase()); // Жанр
+            String studioName = params[5];  // Название студии
+            String address = params[6];  // Адрес студии
 
             // Создание координат и студии
             Coordinates coordinates = new Coordinates(x, y);

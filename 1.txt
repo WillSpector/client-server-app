@@ -1,8 +1,0 @@
-help
-info
-insert 1 "The Beatles" 40 50 "2024-06-01" 5 "ROCK" "Abbey Road Studios" "London"
-show
-update 1 "Queen" 45 55 "2024-06-02" 4 "POP" "EMI Studios" "Manchester"
-remove_key 1
-filter_by_studio "Abbey Road Studios"
-exit

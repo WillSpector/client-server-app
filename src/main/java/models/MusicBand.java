@@ -19,12 +19,12 @@ public class MusicBand implements Comparable<MusicBand> {
     private static int idCounter = 1;
 
     private Integer id;
-    private String name;
-    private Coordinates coordinates;
-    private Date creationDate;
+    private final String name;
+    private final Coordinates coordinates;
+    private final Date creationDate;
     private Integer numberOfParticipants;
-    private MusicGenre genre;
-    private Studio studio;
+    private final MusicGenre genre;
+    private final Studio studio;
 
     public MusicBand(String name, Coordinates coordinates, int numberOfParticipants, MusicGenre genre, Studio studio) {
         // Проверка поля name
@@ -36,7 +36,7 @@ public class MusicBand implements Comparable<MusicBand> {
             throw new IllegalArgumentException("Координаты не могут быть null.");
         }
         // Проверка поля numberOfParticipants (если указано)
-        if (numberOfParticipants <= 0) {
+        if (numberOfParticipants < 0) {
             throw new IllegalArgumentException("Количество участников должно быть больше 0.");
         }
         // Проверка поля genre
