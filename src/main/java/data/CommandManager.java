@@ -41,7 +41,6 @@ public class CommandManager implements CommandRegistry {
         commands.put("print_unique_number_of_participants", new PrintUniqueNumberOfParticipants(collectionManager));
     }
 
-
     /**
      * Возвращает название команды по ее порядковому номеру
      */
@@ -105,7 +104,9 @@ public class CommandManager implements CommandRegistry {
                     commandUseable.execute();
                 }
             }
-            case Update update -> update.executeUpdateWithParameters(parameters);
+
+            case Update update -> update.execute();
+
             default ->
                 // Для всех остальных команд без параметров
                     commandUseable.execute();

@@ -34,91 +34,17 @@ public class Insert extends BaseCommand implements CommandUseable {
             }
             String name = scanner.nextLine().trim();
 
-            // Ввод координаты X с проверкой на корректность
-            long x = 0;
-            boolean xCoordinte = false;
-            while (!xCoordinte) {
-                System.out.print("Введите координату X: ");
-                try {
-                    x = scanner.nextLong();
-                    if (x > 783) {
-                        System.out.println("Ошибка: Координата X не может быть больше 783. Попробуйте снова.");
-                    } else {
-                        xCoordinte = true;
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.println("Ошибка: Введено некорректное значение координаты X. Попробуйте снова.");
-                    scanner.nextLine();
-                }
-            }
-            // Ввод координаты Y с проверкой на корректность
-            long y = 0;
-            boolean yCoordinte = false;
-            while (!yCoordinte) {
-                System.out.print("Введите координату Y: ");
-                try {
-                    y = scanner.nextLong();
-                    yCoordinte = true;
-                } catch (InputMismatchException e) {
-                    System.out.println("Ошибка: Введено некорректное значение координаты Y. Попробуйте снова.");
-                    scanner.nextLine();
-                }
-            }
-            scanner.nextLine();
-
-            Coordinates coordinates = new Coordinates(x, y);
+            // Ввод координат X и Y
+            Coordinates coordinates = InsertData.getCoorinates(scanner);
 
             // Ввод количества участников (больше 0)
-            Integer numberOfParticipants = null;
-            boolean participantsValid = false;
-            while (!participantsValid) {
-                System.out.print("Введите количество участников (больше 0): ");
-                String participantsInput = scanner.nextLine().trim();
-                if (participantsInput.isEmpty()) {
-                    System.out.println("Ошибка: Количество участников не может быть пустым.");
-                } else {
-                    try {
-                        numberOfParticipants = Integer.parseInt(participantsInput);
-                        if (numberOfParticipants > 0) {
-                            participantsValid = true;
-                        } else {
-                            System.out.println("Ошибка: Количество участников должно быть больше 0. Попробуйте снова.");
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Ошибка: Введено некорректное значение (строка). Попробуйте снова.");
-                    }
-                }
-            }
+            Integer numberOfParticipants = InsertData.getNumberOfParticipants(scanner);
 
             // Ввод жанра с проверкой
-            MusicGenre genre = null;
-            while (genre == null) {
-                System.out.print("Введите жанр (ROCK, PSYCHEDELIC_ROCK, PSYCHEDELIC_CLOUD_RAP, JAZZ): ");
-                if (!scanner.hasNextLine()) {
-                    System.out.println("Ошибка: Ожидался ввод жанра.");
-                    return;
-                }
-                try {
-                    genre = MusicGenre.valueOf(scanner.nextLine().trim().toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Ошибка: Неверный жанр. Попробуйте снова.");
-                }
-            }
+            MusicGenre genre = InsertData.getGenre(scanner);
 
-            System.out.print("Введите название студии: ");
-            if (!scanner.hasNextLine()) {
-                System.out.println("Ошибка: Ожидался ввод названия студии.");
-                return;
-            }
-            String studioName = scanner.nextLine().trim();
-
-            System.out.print("Введите адрес студии: ");
-            if (!scanner.hasNextLine()) {
-                System.out.println("Ошибка: Ожидался ввод адреса студии.");
-                return;
-            }
-            String address = scanner.nextLine().trim();
-            Studio studio = new Studio(studioName, address);
+            // Ввод названия и адреса студии
+            Studio studio = InsertData.getStudio(scanner);
 
             int participants = (numberOfParticipants != null) ? numberOfParticipants : 0;
             MusicBand musicBand = new MusicBand(name, coordinates, participants, genre, studio);
@@ -150,14 +76,31 @@ public class Insert extends BaseCommand implements CommandUseable {
                 return;
             }
 
+            // Удаляем внешние кавычки из каждого параметра
+            for (int i = 0; i < params.length; i++) {
+                // Убираем кавычки
+                params[i] = params[i].trim().replaceAll("^\"|\"$", "");
+            }
+
             // Извлечение значений из массива параметров
-            String name = params[0].trim();
-            long x = Long.parseLong(params[1].trim());  // Координата X
-            long y = Long.parseLong(params[2].trim());  // Координата Y
-            int numberOfParticipants = Integer.parseInt(params[3].trim());  // Количество участников
-            MusicGenre genre = MusicGenre.valueOf(params[4].trim().toUpperCase());  // Жанр
-            String studioName = params[5].trim();  // Название студии
-            String address = params[6].trim();  // Адрес студии
+            String name = params[0];
+            long x = Long.parseLong(params[1]);  // Координата X
+            long y = Long.parseLong(params[2]);  // Координата Y
+
+            // Обработка пустого значения для количества участников
+            int numberOfParticipants = 0;  // Значение по умолчанию
+            if (!params[3].isEmpty()) {
+                try {
+                    numberOfParticipants = Integer.parseInt(params[3]);
+                } catch (NumberFormatException e) {
+                    System.out.println("Ошибка: Некорректный формат количества участников. Используйте целое число.");
+                    return;
+                }
+            }
+
+            MusicGenre genre = MusicGenre.valueOf(params[4].trim().toUpperCase()); // Жанр
+            String studioName = params[5];  // Название студии
+            String address = params[6];  // Адрес студии
 
             // Создание координат и студии
             Coordinates coordinates = new Coordinates(x, y);
