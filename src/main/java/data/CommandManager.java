@@ -104,7 +104,9 @@ public class CommandManager implements CommandRegistry {
                     commandUseable.execute();
                 }
             }
+
             case Update update -> update.execute();
+
             default ->
                 // Для всех остальных команд без параметров
                     commandUseable.execute();

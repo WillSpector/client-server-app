@@ -43,10 +43,8 @@ public class Insert extends BaseCommand implements CommandUseable {
             // Ввод жанра с проверкой
             MusicGenre genre = InsertData.getGenre(scanner);
 
-
             // Ввод названия и адреса студии
             Studio studio = InsertData.getStudio(scanner);
-
 
             int participants = (numberOfParticipants != null) ? numberOfParticipants : 0;
             MusicBand musicBand = new MusicBand(name, coordinates, participants, genre, studio);
@@ -77,6 +75,7 @@ public class Insert extends BaseCommand implements CommandUseable {
                 System.out.println("Ошибка: Недостаточно параметров для вставки. Требуется 7 параметров.");
                 return;
             }
+
             // Удаляем внешние кавычки из каждого параметра
             for (int i = 0; i < params.length; i++) {
                 // Убираем кавычки
@@ -112,6 +111,7 @@ public class Insert extends BaseCommand implements CommandUseable {
 
             // Добавление музыкальной группы в коллекцию
             collectionManager.addMusicBand(musicBand);
+
             System.out.println("Музыкальная группа успешно добавлена в коллекцию.");
 
         } catch (NumberFormatException e) {
